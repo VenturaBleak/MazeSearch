@@ -59,7 +59,7 @@ class Visualizer:
         for position in process:
             self.draw_visited_cell(position)
             self.draw_agent_position(position)
-            pygame.time.wait(1)
+            pygame.time.wait(10)
 
     def animate_solution(self, solution):
         self.agent_previous_position = None  # Reset agent's previous position

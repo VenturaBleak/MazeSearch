@@ -1,23 +1,23 @@
+# maze.py
+
 import numpy as np
+import random
 
 class Maze:
-    def __init__(self, size=10):
+    def __init__(self, size):
         self.size = size
-        # Let's use a 2D numpy array to represent the maze.
-        # 0 means path, 1 means wall, 2 means start, and 3 means end.
-        self.maze = np.zeros((size, size), dtype=int)
+        self.maze = np.zeros((size, size))
+        self.start_point = (0, 0)
+        self.end_point = (size-1, size-1)
 
-        # Set random walls
-        wall_indices = np.random.choice(size*size, size*2, replace=False)
-        self.maze[np.unravel_index(wall_indices, (size, size))] = 1
+    def generate_random_maze(self, obstacle_density=0.31):
+        for i in range(self.size):
+            for j in range(self.size):
+                if (i, j) not in [self.start_point, self.end_point] and random.random() < obstacle_density:
+                    self.maze[i][j] = 1
 
-        # Set random start and end points
-        start_point = tuple(np.random.randint(0, size, 2))
-        end_point = tuple(np.random.randint(0, size, 2))
-        while self.maze[end_point] == 1 or start_point == end_point:
-            end_point = tuple(np.random.randint(0, size, 2))
+    def save_to_disk(self, filename):
+        np.save(filename, self.maze)
 
-        self.maze[start_point] = 2
-        self.maze[end_point] = 3
-        self.start_point = start_point
-        self.end_point = end_point
+    def load_from_disk(self, filename):
+        self.maze = np.load(filename)

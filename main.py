@@ -1,17 +1,28 @@
+# main.py
 from maze import Maze
-from solver import BFS_Solver, DFS_Solver
+from game_logic import GameLogic
+from solvers.bfs_solver import BFS_Solver
 from visualizer import Visualizer
+import pygame
 
 if __name__ == "__main__":
-    # create a maze
-    maze = Maze(size=10)
+    maze_size = 8
 
-    # # bfs solver
-    # bfs_solver = BFS_Solver(maze)
-    # visualizer = Visualizer(maze, bfs_solver, time_step=200)
-    # visualizer.visualize_solution()
+    maze = Maze(maze_size)
+    maze.generate_random_maze()
 
-    # dfs solver
-    dfs_solver = DFS_Solver(maze)
-    visualizer = Visualizer(maze, dfs_solver, time_step=200)
-    visualizer.visualize_solution()
+    game_logic = GameLogic(maze)
+    solver = BFS_Solver(maze)
+    process, path = solver.solve()
+
+    visualizer = Visualizer(maze)
+    visualizer.draw_maze()
+
+    # Animate the BFS solving process and solution
+    visualizer.animate_solving_process(process)
+    pygame.time.wait(500)  # Optional: Wait for half a second before animating the solution
+    visualizer.animate_solution(path)
+
+    # Wait for a while after visualization and then close pygame
+    pygame.time.wait(1000)  # Wait for 2 seconds before auto-closing
+    pygame.quit()

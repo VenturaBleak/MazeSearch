@@ -1,85 +1,68 @@
-import tkinter as tk
+# visualizer.py
+
+import pygame
 
 class Visualizer:
-    def __init__(self, maze, solver, time_step=500):
+    def __init__(self, maze):
+        pygame.init()
         self.maze = maze
-        self.solver = solver
-        self.root = tk.Tk()
-        self.canvas = tk.Canvas(self.root, width=maze.size * 20, height=maze.size * 20, bg="white")
-        self.canvas.pack()
-        self.time_step = time_step
-
-        # Introduce flag to determine whether we're visualizing the shortest path
-        self.visualizing_path = False
+        self.cell_size = 20  # Assuming each cell is 20x20 pixels
+        self.screen = pygame.display.set_mode((maze.size * self.cell_size, maze.size * self.cell_size))
+        pygame.display.set_caption('Maze Solver')
+        self.agent_previous_position = None
 
     def draw_maze(self):
+        self.screen.fill((255, 255, 255))  # Resetting the maze by filling it with white
         for i in range(self.maze.size):
             for j in range(self.maze.size):
-                cell_value = self.maze.maze[i][j]
-                if cell_value == 0:  # Empty
-                    color = "white"
-                elif cell_value == 1:  # Wall
-                    color = "black"
-                elif cell_value == 2:  # Start
-                    color = "green"
-                elif cell_value == 3:  # End
-                    color = "red"
-                self.canvas.create_rectangle(j*20, i*20, (j+1)*20, (i+1)*20, fill=color, outline="gray")
+                color = (255, 255, 255)  # white for path
+                if self.maze.maze[i][j] == 1:
+                    color = (0, 0, 0)  # black for obstacle
+                pygame.draw.rect(self.screen, color,
+                                 (j * self.cell_size, i * self.cell_size, self.cell_size, self.cell_size))
+        # Mark start and end positions
+        self.draw_start_end_positions()
 
-    def visualize_agent(self, current_position):
-        i, j = current_position
-        if (i, j) != self.maze.end_point:  # Ensure not to overwrite the goal
-            self.canvas.create_rectangle(j*20, i*20, (j+1)*20, (i+1)*20, fill="purple", outline="gray")
-            self.canvas.create_text((j+0.5)*20, (i+0.5)*20, text="A", fill="white")
+    def draw_start_end_positions(self):
+        pygame.draw.rect(self.screen, (0, 0, 255), (
+            self.maze.start_point[1] * self.cell_size, self.maze.start_point[0] * self.cell_size, self.cell_size,
+            self.cell_size))
+        pygame.draw.rect(self.screen, (255, 0, 0), (
+            self.maze.end_point[1] * self.cell_size, self.maze.end_point[0] * self.cell_size, self.cell_size,
+            self.cell_size))
 
+    def draw_visited_cell(self, position, color=(255, 215, 0)):  # gold color for visited cells
+        pygame.draw.rect(self.screen, color,
+                         (position[1] * self.cell_size, position[0] * self.cell_size, self.cell_size, self.cell_size))
 
-    def visualize_explored(self, position):
-        i, j = position
-        if position == self.maze.start_point:
-            color = "green"
-        elif position != self.maze.end_point:
-            color = "lightblue"
-        else:
-            color = None  # Ensures the end point isn't overwritten
-        if color:
-            self.canvas.create_rectangle(j*20, i*20, (j+1)*20, (i+1)*20, fill=color, outline="gray")
+    def draw_agent_position(self, position, color=(0, 255, 0)):  # green color for agent
+        # Clear the agent from its previous position
+        if self.agent_previous_position:
+            self.draw_visited_cell(self.agent_previous_position)
 
-    def visualize_shortest_path(self, position):
-        i, j = position
-        if position in [self.maze.start_point, self.maze.end_point]:
-            return
-        color = "gold"
-        self.canvas.create_rectangle(j*20, i*20, (j+1)*20, (i+1)*20, fill=color, outline="gray")
+        # Ensure start and end positions are always drawn with their respective colors
+        self.draw_start_end_positions()
 
-    def animate_solution(self):
-        if self.step_index < len(self.solver_steps):
-            current = self.solver_steps[self.step_index]
+        # Draw the agent as a circle inside the tile on top of the maze and start/end points
+        pygame.draw.circle(self.screen, color,
+                           (int(position[1] * self.cell_size + self.cell_size / 2),
+                            int(position[0] * self.cell_size + self.cell_size / 2)),
+                           int(self.cell_size / 2) - 2)  # -2 for a little padding
 
-            if not self.visualizing_path:  # If still doing BFS
-                if self.step_index > 0:
-                    prev = self.solver_steps[self.step_index - 1]
-                    self.visualize_explored(prev)
-                self.visualize_agent(current)
-                if current == self.maze.end_point:  # If we've reached the goal
-                    self.visualizing_path = True  # Set the flag
-                    self.step_index = len(self.solver_steps) - 1  # Start from the last step
-                else:
-                    self.step_index += 1
+        # Update the agent's previous position
+        self.agent_previous_position = position
 
-            else:  # If we're visualizing the shortest path
-                self.visualize_shortest_path(current)
-                if current == self.maze.start_point:  # If we've reached the start point while visualizing path
-                    self.root.after(self.time_step, self.root.destroy)  # Delayed termination
-                    return  # Stop the backpropagation
-                self.step_index -= 1  # Backtrack through the steps
+        pygame.display.flip()
 
-            self.root.after(self.time_step, self.animate_solution)
-        else:
-            self.root.destroy()  # Terminate the window once BFS and shortest path are visualized
+    def animate_solving_process(self, process):
+        for position in process:
+            self.draw_visited_cell(position)
+            self.draw_agent_position(position)
+            pygame.time.wait(50)
 
-    def visualize_solution(self):
-        self.draw_maze()
-        self.solver_steps = list(self.solver.solve())
-        self.step_index = 0
-        self.root.after(self.time_step, self.animate_solution)
-        self.root.mainloop()
+    def animate_solution(self, solution):
+        self.draw_maze()  # Redraw the maze to reset before visualizing the solution
+        for position in solution:
+            self.draw_agent_position(position)
+            pygame.time.wait(100)
+        pygame.display.flip()

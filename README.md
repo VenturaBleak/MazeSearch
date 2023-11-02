@@ -5,7 +5,8 @@ This repository contains a Pygame application to generate random mazes and solve
 
 <img src="https://github.com/VenturaBleak/MazeSearch/blob/master/images/maze_solving.png" width="30%" height="30%"> <img src="https://github.com/VenturaBleak/MazeSearch/blob/master/images/maze_shortest_path.png" width="29%" height="29%">
 
-*Generated maze.* *Maze solved using one of our algorithms.*
+*Breadth-First Search solving maze (left).* *Maze solved using BFS, shortest path between start and end is highlighted (right).*
+
 
 ## Algorithms Used
 

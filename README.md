@@ -6,7 +6,7 @@ This repository contains a Pygame application to generate random mazes and solve
 ![Unsolved Maze](link_to_unsolved_maze_image)
 *Generated maze.*
 
-![Solved Maze](link_to_solved_maze_image)
+![Solved Maze](https://github.com/VenturaBleak/MazeSearch/blob/master/images/maze_shortest_path.png)
 *Maze solved using one of our algorithms.*
 
 ## Algorithms Used

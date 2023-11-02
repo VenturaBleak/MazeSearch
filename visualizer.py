@@ -6,7 +6,8 @@ class Visualizer:
     def __init__(self, maze):
         pygame.init()
         self.maze = maze
-        self.cell_size = 20  # Assuming each cell is 20x20 pixels
+
+        self.cell_size = int(5/maze.size * 100)  # Assuming each cell is 20x20 pixels
         self.screen = pygame.display.set_mode((maze.size * self.cell_size, maze.size * self.cell_size))
         pygame.display.set_caption('Maze Solver')
         self.agent_previous_position = None
@@ -58,9 +59,10 @@ class Visualizer:
         for position in process:
             self.draw_visited_cell(position)
             self.draw_agent_position(position)
-            pygame.time.wait(50)
+            pygame.time.wait(1)
 
     def animate_solution(self, solution):
+        self.agent_previous_position = None  # Reset agent's previous position
         self.draw_maze()  # Redraw the maze to reset before visualizing the solution
         for position in solution:
             self.draw_agent_position(position)

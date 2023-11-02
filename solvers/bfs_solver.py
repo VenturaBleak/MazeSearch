@@ -18,14 +18,16 @@ class BFS_Solver(Solver):
                 if neighbor not in self.visited:
                     queue.append(neighbor)
                     self.visited.add(neighbor)
-                    parent[neighbor] = current
+                    if neighbor not in parent:  # Only set parent if it hasn't been set before
+                        parent[neighbor] = current
 
         if self.end not in parent:  # Check if end is not reached
             return process, []
 
         path = []
-        while self.end:
-            path.append(self.end)
-            self.end = parent.get(self.end)  # Use get to avoid KeyError
+        current = self.end
+        while current:
+            path.append(current)
+            current = parent[current]  # We don't need the get method here since we know current is in parent
 
         return process, path[::-1]

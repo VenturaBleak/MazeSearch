@@ -10,7 +10,7 @@ class Maze:
         self.start_point = (0, 0)
         self.end_point = (size-1, size-1)
 
-    def generate_random_maze(self, obstacle_density=0.2):
+    def generate_random_maze(self, obstacle_density=0.31):
         for i in range(self.size):
             for j in range(self.size):
                 if (i, j) not in [self.start_point, self.end_point] and random.random() < obstacle_density:

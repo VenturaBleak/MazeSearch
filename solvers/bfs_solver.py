@@ -36,9 +36,12 @@ class BFS_Solver:
                     self.visited.add(neighbor)
                     parent[neighbor] = current
 
+        if self.end not in parent:  # Check if end is not reached
+            return process, []
+
         path = []
         while self.end:
             path.append(self.end)
-            self.end = parent[self.end]
+            self.end = parent.get(self.end)  # Use get to avoid KeyError
 
-        return process, path[::-1]  # Return both the solving process and the path from start to end
+        return process, path[::-1]

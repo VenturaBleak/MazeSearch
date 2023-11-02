@@ -9,7 +9,8 @@ from solvers.a_star_solver import A_Star_Solver
 import pygame
 
 if __name__ == "__main__":
-    maze_size = 100
+    maze_size = 20
+    #hi
 
     maze = Maze(maze_size)
 

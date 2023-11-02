@@ -3,7 +3,7 @@
 ## Overview
 This repository contains a Pygame application to generate random mazes and solve them using different algorithms. The goal is simple: start from a random position and find your way to the end point.
 
-![Unsolved Maze](link_to_unsolved_maze_image)
+![Unsolved Maze](https://github.com/VenturaBleak/MazeSearch/blob/master/images/maze_solving.png)
 *Generated maze.*
 
 ![Solved Maze](https://github.com/VenturaBleak/MazeSearch/blob/master/images/maze_shortest_path.png)

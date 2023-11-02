@@ -10,7 +10,6 @@ import pygame
 
 if __name__ == "__main__":
     maze_size = 20
-    #hi
 
     maze = Maze(maze_size)
 
